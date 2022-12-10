@@ -9,5 +9,10 @@
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.28.1"
+  },
+  "dependencies": {
+    "@zerojsus/dingdingrobot": "^1.2.0",
+    "axios": "^1.2.1",
+    "robot-dd": "^1.0.3"
   }
 }
