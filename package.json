@@ -13,6 +13,9 @@
   "dependencies": {
     "@zerojsus/dingdingrobot": "^1.2.0",
     "axios": "^1.2.1",
+    "md5-node": "^1.0.1",
+    "moment": "^2.29.4",
+    "playwright": "^1.28.1",
     "robot-dd": "^1.0.3"
   }
 }

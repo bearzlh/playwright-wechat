@@ -4,12 +4,19 @@ const {test} = require('@playwright/test');
 const axios = require('axios')
 const crypto = require('crypto')
 const fs = require('fs')
+const moment = require('moment')
+const md5 = require('md5-node')
 
 const access_token = '06345ee8237dc74f4acabedc6c100d95efee0e5fd1c218a83f5972c2e09458d3';
 const secret = 'SECd4e64f1f56e48ce2cf735cd1b84bdf43cc95872a031151b827edec674b659e0a';
+const pid = md5(process.pid)
+
+test('test @test', async()=>{
+    debug("hello")
+})
 
 test('提交审核 @shenhe', async ({browser}) => {
-
+    debug("提交审核")
     let {page, context} = await init(browser)
     await page.getByRole('link', {name: "版本管理"}).click()
     const codeList = page.locator('.code_version_dev .code_version_logs .code_version_log')
@@ -36,7 +43,7 @@ test('提交审核 @shenhe', async ({browser}) => {
 });
 
 test('提交发布 @fabu', async ({browser}) => {
-
+    debug("提交发布")
     let {page} = await init(browser)
 
     await page.locator(':visible').getByRole('link', {name: "版本管理"}).click()
@@ -49,7 +56,21 @@ test('提交发布 @fabu', async ({browser}) => {
     await page.locator(':visible').getByRole('button', {name: '提交发布'}).click()
 
     await page.locator('.js_qr_img.weui-desktop-qrcheck__img-area').screenshot();
+    debug("发布结束")
 })
+
+function debug(content) {
+    let currentTime = moment().format("YYYY-MM-DD HH:mm:ss")
+    content = currentTime + " " + pid + " " + content + "\n"
+    fs.writeFile("./tmp/debug.log", content, {flag: "a"}, function (err) {
+        if (err) {
+            console.log(err)
+            throw err;
+        }
+
+        console.log(content)
+    });
+}
 
 async function init(browser) {
     let browserOption = {}
@@ -71,7 +92,7 @@ async function init(browser) {
         await page.locator(qrcodeClass).screenshot({path: `./tmp/${fileName}`})
         await sendMarkdown("请扫码登录", static_url(fileName))
         let username = await page.locator('.user_name').textContent()
-        await sendMarkdown("登录成功:" + username)
+        await sendText("登录成功:" + username)
         await context.storageState({path: loginPath})
     }
 
@@ -88,9 +109,7 @@ function sendText(text) {
         msgtype: "text",
         text: {content: text}
     }
-    return axios.request(options).then(re => {
-        console.log(re.data)
-    })
+    return post(options)
 }
 
 function sendMarkdown(title, image) {
@@ -102,8 +121,13 @@ function sendMarkdown(title, image) {
             text: `### ${title}\n![](${image})`
         }
     }
+    return post(options)
+}
+
+function post(options) {
+    debug(JSON.stringify(options))
     return axios.request(options).then(re => {
-        console.log(re.data)
+        debug(re.data)
     })
 }
 
