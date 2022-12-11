@@ -127,7 +127,7 @@ function sendMarkdown(title, image) {
 function post(options) {
     debug(JSON.stringify(options))
     return axios.request(options).then(re => {
-        debug(re.data)
+        debug(JSON.stringify(re.data))
     })
 }
 
